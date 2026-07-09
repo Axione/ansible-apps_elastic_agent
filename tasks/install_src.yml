@@ -28,8 +28,8 @@
 - name: "Install tasks"
   when:
     - not __installed_bin.stat.exists
-    - or: elastic_agent_version not in __installed_version.stdout | default('')
-    - or: elastic_agent_install_force
+      or elastic_agent_version not in __installed_version.stdout | default('')
+      or elastic_agent_install_force
   block:
     - name: "Create user"
       ansible.builtin.include_tasks: create_user.yml
@@ -94,6 +94,10 @@
       when:
         - elastic_agent_install_origin == "internet"
         - elastic_agent_dl_executor == "localhost"
+
+    - name: "Uninstall tasks if binary exist"
+      ansible.builtin.include_tasks: uninstall.yml
+      when: __installed_bin.stat.exists
 
     - name: "Unarchive"
       ansible.builtin.unarchive:
